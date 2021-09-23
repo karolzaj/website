@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
 import MouseMeshInteraction from './js/three_mmi.js';
-
+import * as TWEEN from 'https://cdn.skypack.dev/@tweenjs/tween.js';
 //--------------------------------------------
 //                  Sizes
 //--------------------------------------------
@@ -9,7 +9,9 @@ const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 };
-
+const startPosX = 0;
+const startPosY = 50;
+const startPosZ = 0;
 //--------------------------------------------
 //           Canvas, Scene, Camera, Renderer
 //--------------------------------------------
@@ -17,7 +19,7 @@ const canvas = document.querySelector('.webgl');
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(75, sizes.width/sizes.height, 0.1, 1000);
-camera.position.setZ(30);
+camera.position.set(startPosX, startPosY, startPosZ);
 scene.add(camera);
 
 const renderer = new THREE.WebGL1Renderer({
@@ -79,8 +81,11 @@ scene.add(torus);
 //                  Movement
 //--------------------------------------------
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableRotate = false;
+controls.enablePan = false;
 controls.minDistance = 1;
-controls.maxDistance = 1000;
+controls.maxDistance = 202;
+controls.target.set(100,50,0);
 
 //--------------------------------------------
 //                Interactions
@@ -94,23 +99,27 @@ mmi.addHandler('torus', 'click', function(mesh){
 });
 mmi.addHandler('wall1', 'click', function(mesh){
     console.log('wall1 clicked!');
-
+    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    var tween = new TWEEN.Tween(controls.target).to({x: 100, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
 });
 mmi.addHandler('wall2', 'click', function(mesh){
     console.log('wall2 clicked!');
-
+    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    var tween = new TWEEN.Tween(controls.target).to({ x: 0, y: 50,z: 100}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
 });
 mmi.addHandler('wall3', 'click', function(mesh){
     console.log('wall3 clicked!');
-
+    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    var tween = new TWEEN.Tween(controls.target).to({ x: -100, y: 50,z: 0 }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
 });
 mmi.addHandler('wall4', 'click', function(mesh){
     console.log('wall4 clicked!');
-
+    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    var tween = new TWEEN.Tween(controls.target).to({ x: 0, y: 50,z: -100 }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
 });
 
 //--------------------------------------------
-//                 Animating
+//                 Funcitons
 //--------------------------------------------
 function animate(){
     requestAnimationFrame(animate);
@@ -119,9 +128,14 @@ function animate(){
     torus.rotation.y += 0.005;
     torus.rotation.z += 0.01;
 
-    controls.update();
+    controls.update()
     mmi.update();
+    TWEEN.update();
     renderer.render(scene,camera);
+    
 };
+
+
+
 
 animate();

@@ -1,6 +1,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
 import MouseMeshInteraction from './js/three_mmi.js';
+import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js';
 import * as TWEEN from 'https://cdn.skypack.dev/@tweenjs/tween.js';
 //--------------------------------------------
 //                  Sizes
@@ -44,22 +45,22 @@ scene.add(ambientLight);
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
 
-const axesHelper = new THREE.AxesHelper(100);
-scene.add( axesHelper );
-
-
 //--------------------------------------------
 //           Geometries, Objects
 //--------------------------------------------
 
 //walls
+const brick_texture = new THREE.TextureLoader().load('./textures/bricks.jpg');
+const brick_normal_map = new THREE.TextureLoader().load('./textures/normal_map_bricks.png');
+const bricks = new THREE.MeshStandardMaterial( { map: brick_texture, normalMap: brick_normal_map} );
+
 const wall1_geometry = new THREE.BoxGeometry(5, 100, 205);
 const wall_material1 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
 const wall_material2 = new THREE.MeshStandardMaterial({color: 0x919191});
 const wall_material3 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
 const wall_material4 = new THREE.MeshStandardMaterial({color: 0x919191});
-const wall1 = new THREE.Mesh(wall1_geometry, wall_material1);
-const wall2 = new THREE.Mesh(wall1_geometry, wall_material2);
+const wall1 = new THREE.Mesh(wall1_geometry, bricks);
+const wall2 = new THREE.Mesh(wall1_geometry, bricks);
 const wall3 = new THREE.Mesh(wall1_geometry, wall_material3);
 const wall4 = new THREE.Mesh(wall1_geometry, wall_material4);
 wall1.name = 'wall1';
@@ -74,6 +75,17 @@ wall2.rotation.y += Math.PI/2
 wall4.rotation.y += Math.PI/2
 scene.add(wall1, wall2, wall3, wall4);
 
+//sofa
+
+const loader = new GLTFLoader();
+loader.load('./models/scene.gltf',     
+    (gltf) => {
+        gltf.scene.scale.set(0.05,0.05,0.05);
+        gltf.scene.position.set(0,10,30)
+        scene.add( gltf.scene );
+    }
+);
+
 //torus:
 const geometry = new THREE.TorusGeometry(10, 3, 16, 105);
 const material = new THREE.MeshStandardMaterial({color: 0x8447f5});
@@ -86,7 +98,9 @@ scene.add(torus);
 //                  Movement
 //--------------------------------------------
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.minDistance = 1;
+controls.enablePan = false;
+controls.enableKeys = true;
+controls.minDistance = 10;
 controls.maxDistance = 202;
 controls.target.set(100,50,0);
 
@@ -146,20 +160,7 @@ document.addEventListener('keydown', function(event) {
     if (event.defaultPrevented) {
         return;
     }
-    if (event.code === "ArrowDown"){
-        // Handle "down" rotation
-        camera.position.set(0,50,1)
-        if (controls.target.y >= 0){
-            updateControlsTarget(controls.target.x, controls.target.y - 1, controls.target.z)
-        }
-    }
-    else if (event.code === "ArrowUp"){
-        // Handle "up" rotation
-        if (controls.target.y <= 100){
-            updateControlsTarget(controls.target.x, controls.target.y + 1, controls.target.z)
-        }
-      } 
-    else if (event.code === "ArrowLeft"){
+    if (event.code === "ArrowLeft"){
         // Handle "left" rotation
         var dest = targetCoordsAfterHorizontalRotation(controls.target.x, controls.target.z, +rotationAngle)
         updateControlsTarget(dest.x, controls.target.y, dest.z);

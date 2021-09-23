@@ -12,6 +12,8 @@ const sizes = {
 const startPosX = 0;
 const startPosY = 50;
 const startPosZ = 0;
+
+const rotationAngle = deg2Rad(2.5)
 //--------------------------------------------
 //           Canvas, Scene, Camera, Renderer
 //--------------------------------------------
@@ -37,10 +39,13 @@ const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(10,10,10);
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(pointLight, ambientLight);
+scene.add(ambientLight);
 
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
+
+const axesHelper = new THREE.AxesHelper(100);
+scene.add( axesHelper );
 
 
 //--------------------------------------------
@@ -49,10 +54,10 @@ scene.add(gridHelper);
 
 //walls
 const wall1_geometry = new THREE.BoxGeometry(5, 100, 205);
-const wall_material1 = new THREE.MeshStandardMaterial({color: 0x8447f5});
-const wall_material2 = new THREE.MeshStandardMaterial({color: 0x5222f5});
-const wall_material3 = new THREE.MeshStandardMaterial({color: 0x3447f5});
-const wall_material4 = new THREE.MeshStandardMaterial({color: 0x0447f5});
+const wall_material1 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
+const wall_material2 = new THREE.MeshStandardMaterial({color: 0x919191});
+const wall_material3 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
+const wall_material4 = new THREE.MeshStandardMaterial({color: 0x919191});
 const wall1 = new THREE.Mesh(wall1_geometry, wall_material1);
 const wall2 = new THREE.Mesh(wall1_geometry, wall_material2);
 const wall3 = new THREE.Mesh(wall1_geometry, wall_material3);
@@ -81,8 +86,6 @@ scene.add(torus);
 //                  Movement
 //--------------------------------------------
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableRotate = false;
-controls.enablePan = false;
 controls.minDistance = 1;
 controls.maxDistance = 202;
 controls.target.set(100,50,0);
@@ -135,7 +138,56 @@ function animate(){
     
 };
 
+//--------------------------------------------
+//                 Keybord Rotations
+//--------------------------------------------
 
+document.addEventListener('keydown', function(event) {
+    if (event.defaultPrevented) {
+        return;
+    }
+    if (event.code === "ArrowDown"){
+        // Handle "down" rotation
+        camera.position.set(0,50,1)
+        if (controls.target.y >= 0){
+            updateControlsTarget(controls.target.x, controls.target.y - 1, controls.target.z)
+        }
+    }
+    else if (event.code === "ArrowUp"){
+        // Handle "up" rotation
+        if (controls.target.y <= 100){
+            updateControlsTarget(controls.target.x, controls.target.y + 1, controls.target.z)
+        }
+      } 
+    else if (event.code === "ArrowLeft"){
+        // Handle "left" rotation
+        var dest = targetCoordsAfterHorizontalRotation(controls.target.x, controls.target.z, +rotationAngle)
+        updateControlsTarget(dest.x, controls.target.y, dest.z);
+    } 
+    else if (event.code === "ArrowRight"){
+        // Handle "right" rotation
+        var dest = targetCoordsAfterHorizontalRotation(controls.target.x, controls.target.z, -rotationAngle)
+        updateControlsTarget(dest.x, controls.target.y, dest.z);
+    }
+    event.preventDefault();
+}, true);
 
+function deg2Rad(x) {
+    return x * Math.PI / 180;
+};
+
+function targetCoordsAfterHorizontalRotation(x,z,theta){
+    return {x: x*Math.cos(theta) + z*Math.sin(theta), z: -x*Math.sin(theta) + z*Math.cos(theta)}
+};
+
+function targetCoordsAfterVerticalRotation(x,y,theta){
+    return {x: x*Math.cos(theta) + y*Math.sin(theta), z: -x*Math.sin(theta) + y*Math.cos(theta)}
+};
+
+function updateControlsTarget(x,y,z){
+    console.log
+    var tween = new TWEEN.Tween(controls.target).to({ x: x, y: y, z: z}, 3)
+    .easing(TWEEN.Easing.Quadratic.Out).start();
+};
 
 animate();

@@ -1,5 +1,6 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+import MouseMeshInteraction from './js/three_mmi.js'
 
 const canvas = document.querySelector('.webgl');
 const scene = new THREE.Scene();
@@ -41,9 +42,21 @@ scene.add(lightHelper, gridHelper);
 
 
 const torus = new THREE.Mesh(geometry, material);
+torus.name = 'torus'
 scene.add(torus);
 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.minDistance = 1
+controls.maxDistance = 1000
+
+const mmi = new MouseMeshInteraction(scene, camera);
+mmi.addHandler('torus', 'click', function(mesh){
+    console.log('torus clicked!');
+    mesh.scale.x *=1.1
+    mesh.scale.y *=1.1
+    mesh.scale.z *=1.1
+});
+
 
 function animate(){
     requestAnimationFrame(animate);
@@ -53,8 +66,10 @@ function animate(){
     torus.rotation.z += 0.01;
 
     controls.update();
-
+    mmi.update();
     renderer.render(scene,camera);
 };
+
+
 
 animate();

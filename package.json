@@ -4,6 +4,7 @@
   "description": "first website with three.js",
   "main": "script.js",
   "dependencies": {
+    "bootstrap": "^5.1.1",
     "three": "^0.132.2"
   },
   "devDependencies": {},

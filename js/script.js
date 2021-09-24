@@ -4,6 +4,7 @@ import MouseMeshInteraction from './three_mmi.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js';
 import * as TWEEN from 'https://cdn.skypack.dev/@tweenjs/tween.js';
 
+
 //--------------------------------------------
 //                  Sizes
 //--------------------------------------------
@@ -24,7 +25,8 @@ const rotationAngle = deg2Rad(2.5)
 //--------------------------------------------
 
 var roomView = true;
-var wallView = false;
+var wallContentView = false;
+var wallTarget = 1;
 //--------------------------------------------
 //      Canvas, Scene, Camera, Renderer
 //--------------------------------------------
@@ -131,48 +133,72 @@ mmi.addHandler('torus', 'click', function(mesh){
     mesh.scale.z *=1.1
 });
 mmi.addHandler('wall1', 'click', function(mesh){
-    if(!wallView){
+    if(!wallContentView){
         console.log('wall1 clicked!');
-        wallView = true;
-        roomView = false;
-        document.getElementById("wall1").style.visibility = "visible";
+        wallContentView = true;
+        roomView = 0;
         changeWallView(wall1.position);
+        if (wallTarget==1) {var timeout = 0}
+        else {var timeout = 1000}
+        setTimeout(() => {  
+            document.getElementById("wall1").style.visibility = "visible";
+            document.getElementById('wall1').style.animation ="slidein 1s ease-out";
+        }, timeout);
+        wallTarget = 1;
     }
     else{
         hideWalls();
     }
 });
 mmi.addHandler('wall2', 'click', function(mesh){
-    if(!wallView){
+    if(!wallContentView){
         console.log('wall2 clicked!');
-        wallView = true;
+        wallContentView = true;
         roomView = false;
-        document.getElementById("wall2").style.visibility = "visible";
         changeWallView(wall2.position);
+        if (wallTarget==2) {var timeout = 0}
+        else {var timeout = 1000}
+        setTimeout(() => {  
+            document.getElementById("wall2").style.visibility = "visible";
+            document.getElementById('wall2').style.animation ="slidein 1s ease-out";
+        }, timeout);
+        wallTarget = 2;
     }
     else{
         hideWalls();
     }
 });
 mmi.addHandler('wall3', 'click', function(mesh){
-    if(!wallView){
+    if(!wallContentView){
         console.log('wall3 clicked!');
-        wallView = true;
+        wallContentView = true;
         roomView = false;
-        document.getElementById("wall3").style.visibility = "visible";
         changeWallView(wall3.position);
+        if (wallTarget==3) {var timeout = 0}
+        else {var timeout = 1000}
+        setTimeout(() => {  
+            document.getElementById("wall3").style.visibility = "visible";
+            document.getElementById('wall3').style.animation ="slidein 1s ease-out";
+        }, timeout);
+        wallTarget = 3;
     }
     else{
         hideWalls();
     }
 });
 mmi.addHandler('wall4', 'click', function(mesh){
-    if(!wallView){
+    if(!wallContentView){
         console.log('wall4 clicked!');
-        wallView = true;
+        wallContentView = true;
         roomView = false;
-        document.getElementById("wall4").style.visibility = "visible";
         changeWallView(wall4.position);
+        if (wallTarget==4) {var timeout = 0}
+        else {var timeout = 1000}
+        setTimeout(() => {  
+            document.getElementById("wall4").style.visibility = "visible";
+            document.getElementById('wall4').style.animation ="slidein 1s ease-out";
+        }, timeout);
+        wallTarget = 4;
     }
     else{
         hideWalls();
@@ -249,10 +275,14 @@ function updateControlsTarget(x,y,z){
 };
 
 function hideWalls(){
-    wallView = false;
+    wallContentView = false;
     document.getElementById("wall1").style.visibility = "hidden";
+    document.getElementById("wall1").style.animation = "none";
     document.getElementById("wall2").style.visibility = "hidden";
+    document.getElementById("wall2").style.animation = "none";
     document.getElementById("wall3").style.visibility = "hidden";
+    document.getElementById("wall3").style.animation = "none";
     document.getElementById("wall4").style.visibility = "hidden";
+    document.getElementById("wall4").style.animation = "none";
     roomView = true;
 }

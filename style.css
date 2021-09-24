@@ -7,3 +7,18 @@ canvas {
 .header {
     text-align: center;
 }
+
+main {
+    z-index: 100;
+    position: absolute;
+    width: 99%;
+    margin: auto;
+    padding: 120px, 10px;
+    display: grid;
+    height: 90000px
+}
+
+.test {
+    font-size: 100px;
+    color: aqua;
+}

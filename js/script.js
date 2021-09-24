@@ -1,23 +1,28 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.132.2'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
-import MouseMeshInteraction from './js/three_mmi.js';
+import MouseMeshInteraction from './three_mmi.js';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/loaders/GLTFLoader.js';
 import * as TWEEN from 'https://cdn.skypack.dev/@tweenjs/tween.js';
+
 //--------------------------------------------
 //                  Sizes
 //--------------------------------------------
+
 const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 };
+
 const startPosX = 0;
 const startPosY = 50;
 const startPosZ = 0;
 
 const rotationAngle = deg2Rad(2.5)
+
 //--------------------------------------------
-//           Canvas, Scene, Camera, Renderer
+//      Canvas, Scene, Camera, Renderer
 //--------------------------------------------
+
 const canvas = document.querySelector('.webgl');
 const scene = new THREE.Scene();
 
@@ -36,6 +41,7 @@ renderer.shadowMap.enabled = true;
 //--------------------------------------------
 //                  Lights
 //--------------------------------------------
+
 const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(10,10,10);
 
@@ -44,6 +50,7 @@ scene.add(ambientLight);
 
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
+
 
 //--------------------------------------------
 //           Geometries, Objects
@@ -55,14 +62,12 @@ const brick_normal_map = new THREE.TextureLoader().load('./textures/normal_map_b
 const bricks = new THREE.MeshStandardMaterial( { map: brick_texture, normalMap: brick_normal_map} );
 
 const wall1_geometry = new THREE.BoxGeometry(5, 100, 205);
-const wall_material1 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
-const wall_material2 = new THREE.MeshStandardMaterial({color: 0x919191});
-const wall_material3 = new THREE.MeshStandardMaterial({color: 0xb5b3b0});
-const wall_material4 = new THREE.MeshStandardMaterial({color: 0x919191});
+
 const wall1 = new THREE.Mesh(wall1_geometry, bricks);
 const wall2 = new THREE.Mesh(wall1_geometry, bricks);
-const wall3 = new THREE.Mesh(wall1_geometry, wall_material3);
-const wall4 = new THREE.Mesh(wall1_geometry, wall_material4);
+const wall3 = new THREE.Mesh(wall1_geometry, bricks);
+const wall4 = new THREE.Mesh(wall1_geometry, bricks);
+
 wall1.name = 'wall1';
 wall2.name = 'wall2';
 wall3.name = 'wall3';
@@ -73,15 +78,15 @@ wall2.position.set(0,50,100)
 wall4.position.set(0,50,-100)
 wall2.rotation.y += Math.PI/2
 wall4.rotation.y += Math.PI/2
+
 scene.add(wall1, wall2, wall3, wall4);
 
-//sofa
-
+//test object
 const loader = new GLTFLoader();
 loader.load('./models/scene.gltf',     
     (gltf) => {
-        gltf.scene.scale.set(0.05,0.05,0.05);
-        gltf.scene.position.set(0,10,30)
+        gltf.scene.scale.set(0.04,0.04,0.04);
+        gltf.scene.position.set(0,40,40)
         scene.add( gltf.scene );
     }
 );
@@ -97,9 +102,12 @@ scene.add(torus);
 //--------------------------------------------
 //                  Movement
 //--------------------------------------------
+
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
-controls.enableKeys = true;
+controls.enableKeys = false;
+controls.enableZoom = false;
+controls.enableRotate = false;
 controls.minDistance = 10;
 controls.maxDistance = 202;
 controls.target.set(100,50,0);
@@ -107,6 +115,8 @@ controls.target.set(100,50,0);
 //--------------------------------------------
 //                Interactions
 //--------------------------------------------
+
+//wall focusing by click
 const mmi = new MouseMeshInteraction(scene, camera);
 mmi.addHandler('torus', 'click', function(mesh){
     console.log('torus clicked!');
@@ -116,46 +126,30 @@ mmi.addHandler('torus', 'click', function(mesh){
 });
 mmi.addHandler('wall1', 'click', function(mesh){
     console.log('wall1 clicked!');
-    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-    var tween = new TWEEN.Tween(controls.target).to({x: 100, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    changeWallView(wall1.position);
 });
 mmi.addHandler('wall2', 'click', function(mesh){
     console.log('wall2 clicked!');
-    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-    var tween = new TWEEN.Tween(controls.target).to({ x: 0, y: 50,z: 100}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    changeWallView(wall2.position);
 });
 mmi.addHandler('wall3', 'click', function(mesh){
     console.log('wall3 clicked!');
-    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-    var tween = new TWEEN.Tween(controls.target).to({ x: -100, y: 50,z: 0 }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    changeWallView(wall3.position);
 });
 mmi.addHandler('wall4', 'click', function(mesh){
     console.log('wall4 clicked!');
-    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
-    var tween = new TWEEN.Tween(controls.target).to({ x: 0, y: 50,z: -100 }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    changeWallView(wall4.position);
 });
 
-//--------------------------------------------
-//                 Funcitons
-//--------------------------------------------
-function animate(){
-    requestAnimationFrame(animate);
+//mouse scrolling
+document.addEventListener("mousewheel", function(event){
+    var angle = rotationAngle;
+    angle += event.wheelDelta/3000;
+    var dest = targetCoordsAfterHorizontalRotation(controls.target.x, controls.target.z, angle);
+    updateControlsTarget(dest.x, controls.target.y, dest.z);
+});
 
-    torus.rotation.x += 0.01;
-    torus.rotation.y += 0.005;
-    torus.rotation.z += 0.01;
-
-    controls.update()
-    mmi.update();
-    TWEEN.update();
-    renderer.render(scene,camera);
-    
-};
-
-//--------------------------------------------
-//                 Keybord Rotations
-//--------------------------------------------
-
+//keyboard scrolling
 document.addEventListener('keydown', function(event) {
     if (event.defaultPrevented) {
         return;
@@ -173,6 +167,34 @@ document.addEventListener('keydown', function(event) {
     event.preventDefault();
 }, true);
 
+//--------------------------------------------
+//                 Animate
+//--------------------------------------------
+
+function animate(){
+    requestAnimationFrame(animate);
+
+    torus.rotation.x += 0.01;
+    torus.rotation.y += 0.005;
+    torus.rotation.z += 0.01;
+
+    controls.update()
+    mmi.update();
+    TWEEN.update();
+    renderer.render(scene,camera);
+    
+};
+
+animate();
+//--------------------------------------------
+//                 Methods/Functions
+//--------------------------------------------
+
+function changeWallView(dest){
+    var tween_camera = new TWEEN.Tween(camera.position).to({x: 0, y: 50, z: 0}, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+    var tween = new TWEEN.Tween(controls.target).to({ x: dest.x, y: dest.y, z: dest.z }, 1000).easing(TWEEN.Easing.Quadratic.Out).start();
+}
+
 function deg2Rad(x) {
     return x * Math.PI / 180;
 };
@@ -181,14 +203,10 @@ function targetCoordsAfterHorizontalRotation(x,z,theta){
     return {x: x*Math.cos(theta) + z*Math.sin(theta), z: -x*Math.sin(theta) + z*Math.cos(theta)}
 };
 
-function targetCoordsAfterVerticalRotation(x,y,theta){
-    return {x: x*Math.cos(theta) + y*Math.sin(theta), z: -x*Math.sin(theta) + y*Math.cos(theta)}
-};
-
 function updateControlsTarget(x,y,z){
     console.log
-    var tween = new TWEEN.Tween(controls.target).to({ x: x, y: y, z: z}, 3)
+    var tween = new TWEEN.Tween(controls.target).to({ x: x, y: y, z: z}, 20)
     .easing(TWEEN.Easing.Quadratic.Out).start();
 };
 
-animate();
+

@@ -4,21 +4,64 @@ canvas {
     left: 0;
 }
 
-.header {
-    text-align: center;
-}
-
-main {
+.main {
     z-index: 100;
     position: absolute;
-    width: 99%;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     margin: auto;
-    padding: 120px, 10px;
-    display: grid;
-    height: 90000px
+}
+
+#wall1 {
+    width: 80vw;
+    height: 80vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid #000000;
+    padding: 10px;
+    background-color: blueviolet;
+}
+
+#wall2 {
+    width: 80vw;
+    height: 80vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid #000000;
+    padding: 10px;
+    background-color: chocolate;
+}
+
+#wall3 {
+    width: 80vw;
+    height: 80vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid #000000;
+    padding: 10px;
+    background-color: darkgreen;
+}
+
+#wall4 {
+    width: 80vw;
+    height: 80vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 5px solid #000000;
+    padding: 10px;
+    background-color: darksalmon;
 }
 
 .test {
-    font-size: 100px;
-    color: aqua;
+    color: rgb(0, 0, 0);
 }

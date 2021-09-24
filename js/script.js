@@ -20,6 +20,12 @@ const startPosZ = 0;
 const rotationAngle = deg2Rad(2.5)
 
 //--------------------------------------------
+//                  States
+//--------------------------------------------
+
+var roomView = true;
+var wallView = false;
+//--------------------------------------------
 //      Canvas, Scene, Camera, Renderer
 //--------------------------------------------
 
@@ -46,7 +52,7 @@ const pointLight = new THREE.PointLight(0xffffff);
 pointLight.position.set(10,10,10);
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(ambientLight);
+scene.add(ambientLight, pointLight);
 
 const gridHelper = new THREE.GridHelper(200, 50);
 scene.add(gridHelper);
@@ -82,21 +88,21 @@ wall4.rotation.y += Math.PI/2
 scene.add(wall1, wall2, wall3, wall4);
 
 //test object
-const loader = new GLTFLoader();
-loader.load('./models/scene.gltf',     
-    (gltf) => {
-        gltf.scene.scale.set(0.04,0.04,0.04);
-        gltf.scene.position.set(0,40,40)
-        scene.add( gltf.scene );
-    }
-);
+// const loader = new GLTFLoader();
+// loader.load('./models/scene.gltf',     
+//     (gltf) => {
+//         gltf.scene.scale.set(0.04,0.04,0.04);
+//         gltf.scene.position.set(0,40,40)
+//         scene.add( gltf.scene );
+//     }
+// );
 
 //torus:
 const geometry = new THREE.TorusGeometry(10, 3, 16, 105);
 const material = new THREE.MeshStandardMaterial({color: 0x8447f5});
 const torus = new THREE.Mesh(geometry, material);
 torus.name = 'torus';
-torus.position.set(0,15,0)
+torus.position.set(50,50,50)
 scene.add(torus);
 
 //--------------------------------------------
@@ -125,20 +131,52 @@ mmi.addHandler('torus', 'click', function(mesh){
     mesh.scale.z *=1.1
 });
 mmi.addHandler('wall1', 'click', function(mesh){
-    console.log('wall1 clicked!');
-    changeWallView(wall1.position);
+    if(!wallView){
+        console.log('wall1 clicked!');
+        wallView = true;
+        roomView = false;
+        document.getElementById("wall1").style.visibility = "visible";
+        changeWallView(wall1.position);
+    }
+    else{
+        hideWalls();
+    }
 });
 mmi.addHandler('wall2', 'click', function(mesh){
-    console.log('wall2 clicked!');
-    changeWallView(wall2.position);
+    if(!wallView){
+        console.log('wall2 clicked!');
+        wallView = true;
+        roomView = false;
+        document.getElementById("wall2").style.visibility = "visible";
+        changeWallView(wall2.position);
+    }
+    else{
+        hideWalls();
+    }
 });
 mmi.addHandler('wall3', 'click', function(mesh){
-    console.log('wall3 clicked!');
-    changeWallView(wall3.position);
+    if(!wallView){
+        console.log('wall3 clicked!');
+        wallView = true;
+        roomView = false;
+        document.getElementById("wall3").style.visibility = "visible";
+        changeWallView(wall3.position);
+    }
+    else{
+        hideWalls();
+    }
 });
 mmi.addHandler('wall4', 'click', function(mesh){
-    console.log('wall4 clicked!');
-    changeWallView(wall4.position);
+    if(!wallView){
+        console.log('wall4 clicked!');
+        wallView = true;
+        roomView = false;
+        document.getElementById("wall4").style.visibility = "visible";
+        changeWallView(wall4.position);
+    }
+    else{
+        hideWalls();
+    }
 });
 
 //mouse scrolling
@@ -166,6 +204,7 @@ document.addEventListener('keydown', function(event) {
     }
     event.preventDefault();
 }, true);
+
 
 //--------------------------------------------
 //                 Animate
@@ -209,4 +248,11 @@ function updateControlsTarget(x,y,z){
     .easing(TWEEN.Easing.Quadratic.Out).start();
 };
 
-
+function hideWalls(){
+    wallView = false;
+    document.getElementById("wall1").style.visibility = "hidden";
+    document.getElementById("wall2").style.visibility = "hidden";
+    document.getElementById("wall3").style.visibility = "hidden";
+    document.getElementById("wall4").style.visibility = "hidden";
+    roomView = true;
+}

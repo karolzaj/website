@@ -112,10 +112,10 @@ scene.add(torus);
 //--------------------------------------------
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.enablePan = false;
-controls.enableKeys = false;
-controls.enableZoom = false;
-controls.enableRotate = false;
+controls.enablePan = true;
+controls.enableKeys = true;
+controls.enableZoom = true;
+controls.enableRotate = true;
 controls.minDistance = 10;
 controls.maxDistance = 202;
 controls.target.set(100,50,0);
